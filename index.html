@@ -206,6 +206,11 @@
   .confirm-line{ display:flex; justify-content:space-between; gap:14px; font-size:0.86rem; }
   .confirm-line span:first-child{ color:var(--ink); }
   .confirm-line span:last-child{ color:var(--ink-muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .confirm-referral{
+    background:var(--accent-soft); color:var(--accent-ink);
+    font-size:0.83rem; line-height:1.45; font-weight:600;
+    border-radius:12px; padding:12px 14px; margin:0 0 16px;
+  }
   .confirm-total{
     display:flex; justify-content:space-between; align-items:baseline; margin-bottom:18px;
   }
@@ -216,11 +221,41 @@
     font-family:'Inter',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer;
   }
   .confirm-newbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .confirm-info-heading{
+    font-size:0.72rem; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--ink-muted); font-weight:700; margin:0 0 10px;
+  }
+  .confirm-info{ display:flex; flex-direction:column; gap:12px; margin-bottom:18px; }
+  .info-card{
+    background:var(--surface-alt); border:1px solid var(--border); border-radius:12px;
+    padding:14px 14px;
+  }
+  .info-card .info-name{
+    font-family:'Fraunces',serif; font-weight:600; font-size:0.98rem; margin:0; color:var(--ink);
+  }
+  .info-card .info-tagline{
+    font-size:0.74rem; color:var(--ink-muted); font-style:italic; margin:1px 0 8px;
+  }
+  .info-card .info-desc{
+    font-size:0.83rem; line-height:1.5; margin:0 0 10px; color:var(--ink);
+  }
+  .info-card .info-uso{
+    font-size:0.8rem; line-height:1.45; margin:0 0 12px; color:var(--ink-muted); font-style:italic;
+  }
+  .info-card .info-uso b{ color:var(--ink); font-style:normal; }
+  .info-ing{ display:flex; flex-direction:column; gap:6px; }
+  .info-ing-item{ font-size:0.8rem; line-height:1.45; display:flex; gap:8px; }
+  .info-ing-item .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--accent); flex:none; margin-top:6px;
+  }
+  .info-ing-item b{ color:var(--ink); }
+  .info-ing-item .benefit{ color:var(--ink-muted); }
 </style>
 
 <div class="wrap">
   <div class="brand">
-    <h1>Pure Skin Care</h1>
+    <h1>Perricone MD</h1>
     <span>Hoja de pedido</span>
   </div>
   <p class="intro">Línea No Make Up. Elige las cantidades que quieras pedir. Cuando termines, pulsa «Enviar pedido por WhatsApp» y te llevamos directamente al chat con el pedido ya escrito, listo para enviar.</p>
@@ -254,6 +289,9 @@
     <h2 id="confirmTitle">Pedido enviado</h2>
     <p class="confirm-sub">Te hemos llevado a WhatsApp para confirmarlo con nosotros. Este es el resumen de tu pedido:</p>
     <div class="confirm-lines" id="confirmLines"></div>
+    <p class="confirm-referral">🎁 Refiere la marca a una conocida y cuando haga su pedido recibirás un 5% de descuento en tu próximo pedido.</p>
+    <p class="confirm-info-heading" id="confirmInfoHeading" hidden>Sobre lo que has pedido</p>
+    <div class="confirm-info" id="confirmInfo"></div>
     <div class="confirm-total">
       <span>Total</span>
       <strong id="confirmTotal">0,00 €</strong>
@@ -268,46 +306,168 @@
 
   var CATEGORIES = [
     { id:"rostro", label:"Rostro", products:[
-      { sku:"13110056", name:"No Makeup Foundation Serum (Ivory)", size:"30ml", pvpr:62, dto:52.70, swatch:"#F3DEC6" },
-      { sku:"13110058", name:"No Makeup Foundation Serum (Nude)", size:"30ml", pvpr:62, dto:52.70, swatch:"#E8C9A6" },
-      { sku:"13110060", name:"No Makeup Foundation Serum (Buff)", size:"30ml", pvpr:62, dto:52.70, swatch:"#DEBB92" },
-      { sku:"13110065", name:"No Makeup Foundation Serum (Beige)", size:"30ml", pvpr:62, dto:52.70, swatch:"#D2A878" },
-      { sku:"12188337", name:"No Makeup Foundation Serum (Golden)", size:"30ml", pvpr:62, dto:52.70, swatch:"#C8935C" },
-      { sku:"13110070", name:"No Makeup Foundation Serum (Tan)", size:"30ml", pvpr:62, dto:52.70, swatch:"#B97D48" },
-      { sku:"13110072", name:"No Makeup Foundation Serum (Rich)", size:"30ml", pvpr:62, dto:52.70, swatch:"#8B5A34" },
-      { sku:"13033761", name:"No Makeup Instant Blur", size:"12ml", pvpr:61, dto:51.85 },
-      { sku:"14020626", name:"No Instant Blur Priming Moisturizer", size:"30ml", pvpr:56, dto:47.60 },
-      { sku:"12188353", name:"No Makeup Bronzer", size:"9ml", pvpr:41, dto:34.85, swatch:"#A66B3D" },
-      { sku:"13033760", name:"No Makeup Blush", size:"10ml", pvpr:41, dto:34.85, swatch:"#D98A93" },
-      { sku:"15244772", name:"No Makeup Blush Balm", size:"4.2gr", pvpr:41, dto:34.85, swatch:"#D9767B" },
-      { sku:"13033759", name:"No Makeup Highlighter", size:"10ml", pvpr:41, dto:34.85, swatch:"#F0DFC0" },
-      { sku:"15769615", name:"No Makeup Radiant Glow Balm (Pearl)", size:"10ml", pvpr:42, dto:35.70, swatch:"#F0E4D8" },
-      { sku:"15769613", name:"No Makeup Radiant Glow Balm (Cool Rose)", size:"10ml", pvpr:42, dto:35.70, swatch:"#E3B9BE" },
-      { sku:"15769614", name:"No Makeup Radiant Glow Balm (Bronze)", size:"10ml", pvpr:42, dto:35.70, swatch:"#B98255" }
+      { sku:"13110056", name:"No Makeup Foundation Serum (Ivory)", size:"30ml", pvpr:62, dto:52.70, swatch:"#F3DEC6", family:"foundation" },
+      { sku:"13110058", name:"No Makeup Foundation Serum (Nude)", size:"30ml", pvpr:62, dto:52.70, swatch:"#E8C9A6", family:"foundation" },
+      { sku:"13110060", name:"No Makeup Foundation Serum (Buff)", size:"30ml", pvpr:62, dto:52.70, swatch:"#DEBB92", family:"foundation" },
+      { sku:"13110065", name:"No Makeup Foundation Serum (Beige)", size:"30ml", pvpr:62, dto:52.70, swatch:"#D2A878", family:"foundation" },
+      { sku:"12188337", name:"No Makeup Foundation Serum (Golden)", size:"30ml", pvpr:62, dto:52.70, swatch:"#C8935C", family:"foundation" },
+      { sku:"13110070", name:"No Makeup Foundation Serum (Tan)", size:"30ml", pvpr:62, dto:52.70, swatch:"#B97D48", family:"foundation" },
+      { sku:"13110072", name:"No Makeup Foundation Serum (Rich)", size:"30ml", pvpr:62, dto:52.70, swatch:"#8B5A34", family:"foundation" },
+      { sku:"13033761", name:"No Makeup Instant Blur", size:"12ml", pvpr:61, dto:51.85, family:"instant_blur" },
+      { sku:"14020626", name:"No Instant Blur Priming Moisturizer", size:"30ml", pvpr:56, dto:47.60, family:"priming_moisturizer" },
+      { sku:"12188353", name:"No Makeup Bronzer", size:"9ml", pvpr:41, dto:34.85, swatch:"#A66B3D", family:"bronzer" },
+      { sku:"13033760", name:"No Makeup Blush", size:"10ml", pvpr:41, dto:34.85, swatch:"#D98A93", family:"blush" },
+      { sku:"15244772", name:"No Makeup Blush Balm", size:"4.2gr", pvpr:41, dto:34.85, swatch:"#D9767B", family:"blush_balm" },
+      { sku:"13033759", name:"No Makeup Highlighter", size:"10ml", pvpr:41, dto:34.85, swatch:"#F0DFC0", family:"highlighter" },
+      { sku:"15769615", name:"No Makeup Radiant Glow Balm (Pearl)", size:"10ml", pvpr:42, dto:35.70, swatch:"#F0E4D8", family:"radiant_glow_balm" },
+      { sku:"15769613", name:"No Makeup Radiant Glow Balm (Cool Rose)", size:"10ml", pvpr:42, dto:35.70, swatch:"#E3B9BE", family:"radiant_glow_balm" },
+      { sku:"15769614", name:"No Makeup Radiant Glow Balm (Bronze)", size:"10ml", pvpr:42, dto:35.70, swatch:"#B98255", family:"radiant_glow_balm" }
     ]},
     { id:"ojos", label:"Ojos", products:[
-      { sku:"13033757", name:"No Makeup Eyeshadow - Tipo 2", size:"10ml", pvpr:41, dto:34.85 },
-      { sku:"13927314", name:"No Makeup Eyeshadow - Tipo 1", size:"10ml", pvpr:41, dto:34.85 },
-      { sku:"13927315", name:"No Makeup Eyeshadow - Tipo 3", size:"10ml", pvpr:41, dto:34.85 },
-      { sku:"13927316", name:"No Makeup Eyeshadow - Tipo 4", size:"10ml", pvpr:41, dto:34.85 },
-      { sku:"13033758", name:"No Makeup Mascara", size:"10ml", pvpr:36, dto:30.60, swatch:"#1A1A1A" },
-      { sku:"15763632", name:"No Mascara Natural Black (Ed. Limitada)", size:"10ml", pvpr:36, dto:30.60, swatch:"#1A1A1A" }
+      { sku:"13033757", name:"No Makeup Eyeshadow - Tipo 2", size:"10ml", pvpr:41, dto:34.85, family:"eyeshadow" },
+      { sku:"13927314", name:"No Makeup Eyeshadow - Tipo 1", size:"10ml", pvpr:41, dto:34.85, family:"eyeshadow" },
+      { sku:"13927315", name:"No Makeup Eyeshadow - Tipo 3", size:"10ml", pvpr:41, dto:34.85, family:"eyeshadow" },
+      { sku:"13927316", name:"No Makeup Eyeshadow - Tipo 4", size:"10ml", pvpr:41, dto:34.85, family:"eyeshadow" },
+      { sku:"13033758", name:"No Makeup Mascara", size:"10ml", pvpr:36, dto:30.60, swatch:"#1A1A1A", family:"mascara" },
+      { sku:"15763632", name:"No Mascara Natural Black (Ed. Limitada)", size:"10ml", pvpr:36, dto:30.60, swatch:"#1A1A1A", family:"mascara" }
     ]},
     { id:"labios", label:"Labios", products:[
-      { sku:"15244775", name:"No Makeup Lipstick (Original Pink)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#E48095" },
-      { sku:"15244774", name:"No Makeup Lipstick (Rose)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#D46B84" },
-      { sku:"12188350", name:"No Makeup Lipstick (Berry)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#A83D5C" },
-      { sku:"15244776", name:"No Makeup Lipstick (Red)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#C31F3A" },
-      { sku:"15244779", name:"No Makeup Lipstick (Cognac)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#8B4A3A" },
-      { sku:"15244777", name:"No Makeup Lipstick (Wine)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#6B2437" },
-      { sku:"14965783", name:"No Makeup Lip Oil (Lychee)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F2A9A0" },
-      { sku:"14965782", name:"No Makeup Lip Oil (Guava)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F08A6C" },
-      { sku:"14965780", name:"No Makeup Lip Oil (Pomegranate)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#C0374A" },
-      { sku:"14965785", name:"No Makeup Lip Oil (Pink Grapefruit)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F4998F" },
-      { sku:"14965781", name:"No Makeup Lip Oil (Raspberry)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#B23A56" },
-      { sku:"14965784", name:"No Makeup Lip Oil (Plum)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#6E3550" }
+      { sku:"15244775", name:"No Makeup Lipstick (Original Pink)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#E48095", family:"lipstick" },
+      { sku:"15244774", name:"No Makeup Lipstick (Rose)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#D46B84", family:"lipstick" },
+      { sku:"12188350", name:"No Makeup Lipstick (Berry)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#A83D5C", family:"lipstick" },
+      { sku:"15244776", name:"No Makeup Lipstick (Red)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#C31F3A", family:"lipstick" },
+      { sku:"15244779", name:"No Makeup Lipstick (Cognac)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#8B4A3A", family:"lipstick" },
+      { sku:"15244777", name:"No Makeup Lipstick (Wine)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#6B2437", family:"lipstick" },
+      { sku:"14965783", name:"No Makeup Lip Oil (Lychee)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F2A9A0", family:"lip_oil" },
+      { sku:"14965782", name:"No Makeup Lip Oil (Guava)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F08A6C", family:"lip_oil" },
+      { sku:"14965780", name:"No Makeup Lip Oil (Pomegranate)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#C0374A", family:"lip_oil" },
+      { sku:"14965785", name:"No Makeup Lip Oil (Pink Grapefruit)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F4998F", family:"lip_oil" },
+      { sku:"14965781", name:"No Makeup Lip Oil (Raspberry)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#B23A56", family:"lip_oil" },
+      { sku:"14965784", name:"No Makeup Lip Oil (Plum)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#6E3550", family:"lip_oil" }
     ]}
   ];
+
+  var PRODUCT_INFO = {
+    instant_blur: {
+      name: "Instant Blur",
+      tagline: "Primer / Prebase de maquillaje",
+      desc: "Bálsamo multifunción que difumina y minimiza al instante la apariencia de poros, rojeces, arrugas y líneas de expresión, suavizando visiblemente la textura de la piel. Funciona solo o como primer paso antes del resto de la línea No Makeup, en todo tipo de piel y tonalidades.",
+      uso: "Deslizar el aplicador sobre el rostro, insistiendo en zonas con brillo, poros visibles o líneas de expresión.",
+      ing: [
+        { name:"Ácido Alfalipóico (ALA)", benefit:"el antioxidante más potente" },
+        { name:"Vitamina E", benefit:"hidratante y antioxidante reparador" },
+        { name:"Esqualeno", benefit:"hidratante y con poder nutriente" }
+      ]
+    },
+    priming_moisturizer: {
+      name: "Instant Blur Priming Moisturizer",
+      tagline: "Primer / Prebase de maquillaje",
+      desc: "Primer y perfeccionador de tez invisible y multitarea que crea un efecto de enfoque suave y un acabado satinado: difumina las imperfecciones y el tono desigual de la piel, reduciendo la apariencia de los poros, las arrugas, el enrojecimiento y la textura desigual.",
+      uso: "Deslizar el aplicador sobre el rostro, insistiendo en zonas con brillo, poros visibles o líneas de expresión.",
+      ing: [
+        { name:"Ácido Alfalipóico (ALA)", benefit:"el antioxidante más potente" },
+        { name:"Glicerina", benefit:"humectante natural" },
+        { name:"Bentonita", benefit:"arcilla rica en minerales que ayuda a detoxificar la piel y minimiza la apariencia de los poros" }
+      ]
+    },
+    foundation: {
+      name: "Foundation Serum",
+      tagline: "Base de maquillaje",
+      desc: "Base de tratamiento con cobertura construible y acabado semimate que unifica el tono y disimula visiblemente manchas e imperfecciones. Incluye SPF 20 de amplio espectro para proteger la piel mientras la perfecciona.",
+      uso: "Aplicar con la yema de los dedos o un pincel de fibra sintética, mezclando en movimientos circulares.",
+      ing: [
+        { name:"Neuropéptidos", benefit:"mejoran las arrugas y líneas de expresión" },
+        { name:"Bisabolol", benefit:"antioxidante iluminador" },
+        { name:"Extracto de flor de margarita", benefit:"iguala visiblemente el tono de la piel" }
+      ]
+    },
+    bronzer: {
+      name: "Bronzer",
+      tagline: "Bronceador fluido con SPF 15",
+      desc: "Bronceador líquido y ligero que aporta un brillo dorado de aspecto saludable, sin dejar la piel grasa ni apelmazada. Se difumina con suma facilidad y mejora visiblemente la luminosidad de la piel con el uso continuado.",
+      uso: "Agitar bien. Aplicar una o dos gotas con la yema de los dedos en frente, mejillas, barbilla y nariz.",
+      ing: [
+        { name:"Vitamin C Ester", benefit:"iluminador y suavizante reforzado" },
+        { name:"Extracto de jengibre chino", benefit:"iluminador y perfeccionador natural de la piel" }
+      ]
+    },
+    lip_oil: {
+      name: "Lip Oil",
+      tagline: "Aceite labial con tratamiento",
+      desc: "La solución ideal que combina maquillaje y tratamiento para los labios. Este aceite labial no pegajoso, infusionado con ingredientes para el cuidado de la piel, aporta un toque de color y un brillo luminoso, mientras repara e hidrata los labios al instante.",
+      uso: "Aplicar generosamente sobre los labios y reaplicar durante el día según se necesite.",
+      ing: [
+        { name:"Péptidos", benefit:"combate la pérdida visible de colágeno" },
+        { name:"Ácido Hialurónico", benefit:"hidratación profunda todo el día" },
+        { name:"Aceite de Semilla de Granada", benefit:"poder antioxidante" }
+      ]
+    },
+    lipstick: {
+      name: "Lipstick",
+      tagline: "Labial con SPF 15",
+      desc: "Labial que hidrata y aporta color con un sutil acabado brillante, mejorando visiblemente la firmeza y definición del contorno labial. Con el uso continuado deja los labios más suaves y rellenos, y protege gracias a su protector solar mineral.",
+      uso: "Aplicar generosamente sobre los labios y reaplicar durante el día según se necesite.",
+      ing: [
+        { name:"Neuropéptidos", benefit:"mejoran las arrugas y líneas de expresión" },
+        { name:"Ácido Hialurónico", benefit:"hidratación profunda" },
+        { name:"Protector solar de base mineral", benefit:"protección SPF avanzada" }
+      ]
+    },
+    eyeshadow: {
+      name: "Eyeshadow",
+      tagline: "Sombra de ojos en sérum",
+      desc: "Sombra de ojos en textura sérum que alisa el párpado y crea un color más luminoso y uniforme, con acabado satinado perlado. Puede usarse sola o como base iluminadora bajo otro maquillaje de ojos.",
+      uso: "Agitar bien. Aplicar una o dos gotas en el párpado y difuminar con la yema de los dedos.",
+      ing: [
+        { name:"Acyl-Glutathione", benefit:"el antioxidante maestro" },
+        { name:"DMAE", benefit:"reafirmante intensivo" },
+        { name:"Vitamin C Ester", benefit:"iluminador y suavizante reforzado" }
+      ]
+    },
+    radiant_glow_balm: {
+      name: "Radiant Glow Balm",
+      tagline: "Bálsamo iluminador multiusos",
+      desc: "Bálsamo multiusos que aporta un tinte natural, un efecto glow difuminado y una hidratación ligera para un acabado luminoso. Transforma al instante la piel apagada, aportando color de aspecto natural con hidratación inmediata.",
+      uso: "Romper la superficie con el dedo antes de usar. Aplicar con la yema de los dedos, esponja o brocha en cualquier zona donde se desee color o brillo; se puede usar solo o sobre la base de maquillaje.",
+      ing: [
+        { name:"Vitamin C Ester", benefit:"ilumina la piel y afina la textura" },
+        { name:"Niacinamida", benefit:"minimiza imperfecciones e iguala el tono" },
+        { name:"Manteca de Karité", benefit:"hidratación intensa con vitaminas A, E y F" }
+      ]
+    },
+    mascara: {
+      name: "Mascara",
+      tagline: "Tratamiento 2 en 1 para pestañas",
+      desc: "Máscara y tratamiento de pestañas 2 en 1: las levanta y engrosa visiblemente al instante, mientras las nutre, acondiciona y fortalece con el uso continuado, clínicamente comprobado para dar apariencia de pestañas más largas y gruesas.",
+      uso: "Usar las cerdas cortas en la raíz para dar volumen; girar el cepillo y peinar las puntas para alargar y definir.",
+      ing: [
+        { name:"Biotina", benefit:"nutre y fortalece" },
+        { name:"Aceite de aguacate", benefit:"nutre en profundidad" },
+        { name:"Tocotrienoles", benefit:"favorecen el crecimiento de las pestañas" }
+      ]
+    },
+    blush_balm: {
+      name: "Blush Balm",
+      tagline: "Colorete en bálsamo",
+      desc: "Colorete en crema modulable que aporta un color natural y un acabado radiante. Fácil de difuminar y de usar, se desliza sin esfuerzo para iluminar al instante y mejorar visiblemente el tono apagado y la decoloración con el paso del tiempo.",
+      uso: "Agitar bien. Aplicar de uno a tres toques en las mejillas y difuminar hacia la línea del cabello.",
+      ing: [
+        { name:"Vitamin C Ester", benefit:"luminosidad, firmeza, antioxidante, antiinflamatorio" },
+        { name:"Ceramidas", benefit:"soporte para la barrera, ayudan a proteger contra los agresores ambientales" },
+        { name:"Flor de Camelia", benefit:"reduce la apariencia de líneas y arrugas; rica en ácidos grasos omega-6" }
+      ]
+    },
+    highlighter: {
+      name: "Highlighter",
+      tagline: "Iluminador",
+      desc: "Iluminador líquido que añade una luminosidad sutil y natural, unificando visiblemente el tono de la piel y aclarando las zonas apagadas con el paso del tiempo, gracias a sus perlas pigmentadas que reflejan la luz.",
+      uso: "Agitar bien. Aplicar uno o dos puntos en pómulos, arco de la ceja o punta de la nariz y presionar suavemente.",
+      ing: [
+        { name:"Vitamin C Ester", benefit:"iluminador y suavizante reforzado" },
+        { name:"Extracto de jengibre chino", benefit:"iluminador y perfeccionador natural de la piel" }
+      ]
+    }
+  };
 
   var euro = function(n){
     return n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
@@ -391,7 +551,10 @@
   var sendBtn = document.getElementById('sendBtn');
 
   var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmCard = document.querySelector('.confirm-card');
   var confirmLines = document.getElementById('confirmLines');
+  var confirmInfoHeading = document.getElementById('confirmInfoHeading');
+  var confirmInfo = document.getElementById('confirmInfo');
   var confirmTotal = document.getElementById('confirmTotal');
   var newOrderBtn = document.getElementById('newOrderBtn');
 
@@ -403,7 +566,7 @@
       if(q > 0){
         var lineTotal = q * p.dto;
         total += lineTotal;
-        lines.push({ text: q + 'x ' + p.name + ' (' + p.size + ')', sku: p.sku, lineTotal: lineTotal });
+        lines.push({ text: q + 'x ' + p.name + ' (' + p.size + ')', sku: p.sku, lineTotal: lineTotal, family: p.family });
       }
     });
     return { lines: lines, total: total };
@@ -453,9 +616,41 @@
     confirmLines.innerHTML = order.lines.map(function(l){
       return '<div class="confirm-line"><span>' + l.text + '</span><span>' + euro(l.lineTotal) + '</span></div>';
     }).join('');
+
+    // one info card per distinct product family ordered, in first-ordered order,
+    // skipping any family without a spec sheet on file rather than guessing at one
+    var seen = {};
+    var families = [];
+    order.lines.forEach(function(l){
+      if(l.family && PRODUCT_INFO[l.family] && !seen[l.family]){
+        seen[l.family] = true;
+        families.push(l.family);
+      }
+    });
+    if(families.length){
+      confirmInfo.innerHTML = families.map(function(key){
+        var info = PRODUCT_INFO[key];
+        var ingHtml = info.ing.map(function(i){
+          return '<div class="info-ing-item"><span class="dot" aria-hidden="true"></span><span><b>' + i.name + ':</b> <span class="benefit">' + i.benefit + '</span></span></div>';
+        }).join('');
+        return '<div class="info-card">' +
+          '<p class="info-name">' + info.name + '</p>' +
+          '<p class="info-tagline">' + info.tagline + '</p>' +
+          '<p class="info-desc">' + info.desc + '</p>' +
+          (info.uso ? '<p class="info-uso"><b>Modo de uso:</b> ' + info.uso + '</p>' : '') +
+          '<div class="info-ing">' + ingHtml + '</div>' +
+        '</div>';
+      }).join('');
+      confirmInfoHeading.hidden = false;
+    } else {
+      confirmInfo.innerHTML = '';
+      confirmInfoHeading.hidden = true;
+    }
+
     confirmTotal.textContent = euro(order.total);
     confirmOverlay.hidden = false;
-    newOrderBtn.focus();
+    confirmCard.scrollTop = 0;
+    newOrderBtn.focus({ preventScroll: true });
   }
 
   sendBtn.addEventListener('click', function(e){
