@@ -1,0 +1,506 @@
+<title>Hoja de Pedido No Make Up</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#F6F1EC;
+    --surface:#FFFFFF;
+    --surface-alt:#FBF7F3;
+    --ink:#2A2420;
+    --ink-muted:#7C7168;
+    --accent:#A85D63;
+    --accent-ink:#5C2E32;
+    --accent-soft:#F0DCDA;
+    --border:#E6DBD0;
+    --whatsapp:#25D366;
+    --whatsapp-ink:#0B4B27;
+    --shadow: 0 1px 2px rgba(42,36,32,0.06), 0 6px 16px rgba(42,36,32,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1B1714;
+      --surface:#241E19;
+      --surface-alt:#2B241E;
+      --ink:#F3ECE4;
+      --ink-muted:#B3A89C;
+      --accent:#E6A0A5;
+      --accent-ink:#FBEAEA;
+      --accent-soft:#3A2429;
+      --border:#3B332B;
+      --whatsapp:#2FE375;
+      --whatsapp-ink:#06210F;
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1B1714;
+    --surface:#241E19;
+    --surface-alt:#2B241E;
+    --ink:#F3ECE4;
+    --ink-muted:#B3A89C;
+    --accent:#E6A0A5;
+    --accent-ink:#FBEAEA;
+    --accent-soft:#3A2429;
+    --border:#3B332B;
+    --whatsapp:#2FE375;
+    --whatsapp-ink:#06210F;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    padding-inline:16px;
+    padding-block:0 96px;
+  }
+  .wrap{ max-width:600px; margin:0 auto; }
+
+  .brand{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    padding-block:18px 6px;
+  }
+  .brand h1{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+    font-size:1.5rem; margin:0; text-wrap:balance; color:var(--ink);
+  }
+  .brand span{
+    font-size:0.72rem; color:var(--accent-ink); letter-spacing:.06em; text-transform:uppercase;
+    font-weight:700; background:var(--accent-soft); padding:4px 9px; border-radius:999px;
+    white-space:nowrap;
+  }
+  .intro{
+    color:var(--ink-muted); font-size:0.88rem; line-height:1.5; margin:0 0 16px;
+  }
+
+  .navchips{
+    display:flex; gap:8px; overflow-x:auto; padding-block:4px 14px;
+    position:sticky; top:0; background:var(--bg); z-index:5;
+    scrollbar-width:none;
+  }
+  .navchips::-webkit-scrollbar{display:none;}
+  .navchips a{
+    flex:none;
+    font-size:0.8rem; font-weight:600; color:var(--accent-ink);
+    background:var(--accent-soft); border:1px solid var(--border);
+    padding:7px 14px; border-radius:999px; text-decoration:none;
+    white-space:nowrap;
+  }
+
+  section.category{ margin-block:6px 22px; scroll-margin-top:56px; }
+  .category h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.05rem;
+    margin:0 0 10px; padding-bottom:8px; border-bottom:1px solid var(--border);
+    display:flex; align-items:baseline; justify-content:space-between;
+  }
+  .category h2 small{
+    font-family:'Inter',sans-serif; font-weight:500; font-size:0.72rem;
+    color:var(--ink-muted); text-transform:none;
+  }
+
+  .product{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:10px 12px;
+    padding:12px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .product:last-child{ border-bottom:none; }
+
+  .swatch{
+    width:26px; height:26px; border-radius:50%;
+    border:1px solid rgba(0,0,0,0.12);
+    flex:none;
+  }
+  .swatch.none{ visibility:hidden; }
+
+  .pinfo{ min-width:0; }
+  .pinfo .name{ font-size:0.92rem; font-weight:600; line-height:1.3; }
+  .pinfo .meta{
+    font-size:0.78rem; color:var(--ink-muted); margin-top:2px;
+    display:flex; gap:8px; flex-wrap:wrap; align-items:baseline;
+  }
+  .pinfo .pvpr{ text-decoration:line-through; opacity:.75; }
+  .pinfo .pvpdto{ color:var(--accent-ink); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  .qty{
+    display:flex; align-items:center; gap:6px; flex:none;
+  }
+  .qty button{
+    width:30px; height:30px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface-alt); color:var(--ink); font-size:1.05rem; line-height:1;
+    cursor:pointer;
+  }
+  .qty button:active{ background:var(--accent-soft); }
+  .qty input{
+    width:36px; text-align:center; border:1px solid var(--border); border-radius:8px;
+    background:var(--surface); color:var(--ink); font-size:0.92rem; padding:6px 2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .qty input:focus-visible, .qty button:focus-visible, .navchips a:focus-visible, .sendbtn:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  .footerbar{
+    position:fixed; left:0; right:0; bottom:0;
+    background:var(--surface); border-top:1px solid var(--border);
+    box-shadow:var(--shadow);
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  .footerbar .inner{ max-width:600px; margin:0 auto; }
+  .totalrow{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.85rem; color:var(--ink-muted); margin-bottom:8px;
+  }
+  .totalrow strong{
+    font-size:1.15rem; color:var(--ink); font-variant-numeric:tabular-nums;
+  }
+  .sendbtn{
+    width:100%; border:none; border-radius:12px; padding:14px 16px;
+    background:var(--whatsapp); color:var(--whatsapp-ink);
+    font-family:'Inter',sans-serif; font-weight:700; font-size:0.98rem;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    cursor:pointer; text-decoration:none; -webkit-tap-highlight-color:transparent;
+  }
+  .sendbtn[aria-disabled="true"]{ opacity:.45; cursor:not-allowed; pointer-events:none; }
+  .sendbtn svg{ width:18px; height:18px; flex:none; }
+
+  .note{
+    font-size:0.74rem; color:var(--ink-muted); text-align:center; margin-top:8px;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .product{ transition:background-color .15s ease; }
+  }
+
+  .confirm-overlay{
+    position:fixed; inset:0; background:rgba(20,16,13,0.5);
+    display:flex; align-items:flex-end; justify-content:center;
+    padding:16px; z-index:30;
+  }
+  .confirm-overlay[hidden]{ display:none; }
+  @media (min-width:640px){ .confirm-overlay{ align-items:center; } }
+  .confirm-card{
+    background:var(--surface); border-radius:18px;
+    padding:24px 20px calc(20px + env(safe-area-inset-bottom));
+    max-width:460px; width:100%; max-height:82vh; overflow-y:auto;
+    box-shadow:var(--shadow);
+  }
+  .confirm-check{
+    width:42px; height:42px; border-radius:50%;
+    background:var(--whatsapp); color:var(--whatsapp-ink);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.25rem; font-weight:700; margin-bottom:14px;
+  }
+  .confirm-card h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.3rem; margin:0 0 6px; text-wrap:balance;
+  }
+  .confirm-sub{
+    font-size:0.85rem; color:var(--ink-muted); line-height:1.5; margin:0 0 16px;
+  }
+  .confirm-lines{
+    display:flex; flex-direction:column; gap:8px;
+    border-block:1px solid var(--border); padding-block:14px; margin-bottom:14px;
+  }
+  .confirm-line{ display:flex; justify-content:space-between; gap:14px; font-size:0.86rem; }
+  .confirm-line span:first-child{ color:var(--ink); }
+  .confirm-line span:last-child{ color:var(--ink-muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .confirm-total{
+    display:flex; justify-content:space-between; align-items:baseline; margin-bottom:18px;
+  }
+  .confirm-total strong{ font-size:1.25rem; font-variant-numeric:tabular-nums; }
+  .confirm-newbtn{
+    width:100%; border:none; border-radius:12px; padding:14px 16px;
+    background:var(--accent); color:var(--surface);
+    font-family:'Inter',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer;
+  }
+  .confirm-newbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+</style>
+
+<div class="wrap">
+  <div class="brand">
+    <h1>Pure Skin Care</h1>
+    <span>Hoja de pedido</span>
+  </div>
+  <p class="intro">Línea No Make Up. Elige las cantidades que quieras pedir. Cuando termines, pulsa «Enviar pedido por WhatsApp» y te llevamos directamente al chat con el pedido ya escrito, listo para enviar.</p>
+
+  <nav class="navchips">
+    <a href="#cat-rostro">Rostro</a>
+    <a href="#cat-ojos">Ojos</a>
+    <a href="#cat-labios">Labios</a>
+  </nav>
+
+  <div id="catalog"></div>
+</div>
+
+<div class="footerbar">
+  <div class="inner">
+    <div class="totalrow">
+      <span id="itemsLabel">0 productos seleccionados</span>
+      <strong id="totalLabel">0,00 €</strong>
+    </div>
+    <a class="sendbtn" id="sendBtn" href="#" role="button" aria-disabled="true" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.33 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.8c2.15 0 4.17.84 5.69 2.36a8.02 8.02 0 0 1 2.36 5.7c0 4.45-3.62 8.07-8.06 8.07a8.1 8.1 0 0 1-4.11-1.12l-.29-.17-3.12.82.83-3.04-.19-.31a7.98 7.98 0 0 1-1.23-4.25c0-4.45 3.62-8.06 8.07-8.06Zm-4.42 4.59c-.16 0-.42.06-.64.31-.22.25-.85.83-.85 2.02s.87 2.35.99 2.51c.12.16 1.7 2.7 4.19 3.68 2.07.82 2.49.66 2.94.62.45-.04 1.44-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.39-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42Z"/></svg>
+      Enviar pedido por WhatsApp
+    </a>
+    <p class="note">Se abrirá WhatsApp con el pedido redactado, solo tienes que pulsar enviar.</p>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay" hidden>
+  <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-check" aria-hidden="true">✓</div>
+    <h2 id="confirmTitle">Pedido enviado</h2>
+    <p class="confirm-sub">Te hemos llevado a WhatsApp para confirmarlo con nosotros. Este es el resumen de tu pedido:</p>
+    <div class="confirm-lines" id="confirmLines"></div>
+    <div class="confirm-total">
+      <span>Total</span>
+      <strong id="confirmTotal">0,00 €</strong>
+    </div>
+    <button type="button" class="confirm-newbtn" id="newOrderBtn">Hacer otro pedido</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var WHATSAPP_NUMBER = "34662536692";
+
+  var CATEGORIES = [
+    { id:"rostro", label:"Rostro", products:[
+      { sku:"13110056", name:"No Makeup Foundation Serum (Ivory)", size:"30ml", pvpr:62, dto:52.70, swatch:"#F3DEC6" },
+      { sku:"13110058", name:"No Makeup Foundation Serum (Nude)", size:"30ml", pvpr:62, dto:52.70, swatch:"#E8C9A6" },
+      { sku:"13110060", name:"No Makeup Foundation Serum (Buff)", size:"30ml", pvpr:62, dto:52.70, swatch:"#DEBB92" },
+      { sku:"13110065", name:"No Makeup Foundation Serum (Beige)", size:"30ml", pvpr:62, dto:52.70, swatch:"#D2A878" },
+      { sku:"12188337", name:"No Makeup Foundation Serum (Golden)", size:"30ml", pvpr:62, dto:52.70, swatch:"#C8935C" },
+      { sku:"13110070", name:"No Makeup Foundation Serum (Tan)", size:"30ml", pvpr:62, dto:52.70, swatch:"#B97D48" },
+      { sku:"13110072", name:"No Makeup Foundation Serum (Rich)", size:"30ml", pvpr:62, dto:52.70, swatch:"#8B5A34" },
+      { sku:"13033761", name:"No Makeup Instant Blur", size:"12ml", pvpr:61, dto:51.85 },
+      { sku:"14020626", name:"No Instant Blur Priming Moisturizer", size:"30ml", pvpr:56, dto:47.60 },
+      { sku:"12188353", name:"No Makeup Bronzer", size:"9ml", pvpr:41, dto:34.85, swatch:"#A66B3D" },
+      { sku:"13033760", name:"No Makeup Blush", size:"10ml", pvpr:41, dto:34.85, swatch:"#D98A93" },
+      { sku:"15244772", name:"No Makeup Blush Balm", size:"4.2gr", pvpr:41, dto:34.85, swatch:"#D9767B" },
+      { sku:"13033759", name:"No Makeup Highlighter", size:"10ml", pvpr:41, dto:34.85, swatch:"#F0DFC0" },
+      { sku:"15769615", name:"No Makeup Radiant Glow Balm (Pearl)", size:"10ml", pvpr:42, dto:35.70, swatch:"#F0E4D8" },
+      { sku:"15769613", name:"No Makeup Radiant Glow Balm (Cool Rose)", size:"10ml", pvpr:42, dto:35.70, swatch:"#E3B9BE" },
+      { sku:"15769614", name:"No Makeup Radiant Glow Balm (Bronze)", size:"10ml", pvpr:42, dto:35.70, swatch:"#B98255" }
+    ]},
+    { id:"ojos", label:"Ojos", products:[
+      { sku:"13033757", name:"No Makeup Eyeshadow - Tipo 2", size:"10ml", pvpr:41, dto:34.85 },
+      { sku:"13927314", name:"No Makeup Eyeshadow - Tipo 1", size:"10ml", pvpr:41, dto:34.85 },
+      { sku:"13927315", name:"No Makeup Eyeshadow - Tipo 3", size:"10ml", pvpr:41, dto:34.85 },
+      { sku:"13927316", name:"No Makeup Eyeshadow - Tipo 4", size:"10ml", pvpr:41, dto:34.85 },
+      { sku:"13033758", name:"No Makeup Mascara", size:"10ml", pvpr:36, dto:30.60, swatch:"#1A1A1A" },
+      { sku:"15763632", name:"No Mascara Natural Black (Ed. Limitada)", size:"10ml", pvpr:36, dto:30.60, swatch:"#1A1A1A" }
+    ]},
+    { id:"labios", label:"Labios", products:[
+      { sku:"15244775", name:"No Makeup Lipstick (Original Pink)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#E48095" },
+      { sku:"15244774", name:"No Makeup Lipstick (Rose)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#D46B84" },
+      { sku:"12188350", name:"No Makeup Lipstick (Berry)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#A83D5C" },
+      { sku:"15244776", name:"No Makeup Lipstick (Red)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#C31F3A" },
+      { sku:"15244779", name:"No Makeup Lipstick (Cognac)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#8B4A3A" },
+      { sku:"15244777", name:"No Makeup Lipstick (Wine)", size:"4.2gr", pvpr:36, dto:30.60, swatch:"#6B2437" },
+      { sku:"14965783", name:"No Makeup Lip Oil (Lychee)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F2A9A0" },
+      { sku:"14965782", name:"No Makeup Lip Oil (Guava)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F08A6C" },
+      { sku:"14965780", name:"No Makeup Lip Oil (Pomegranate)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#C0374A" },
+      { sku:"14965785", name:"No Makeup Lip Oil (Pink Grapefruit)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#F4998F" },
+      { sku:"14965781", name:"No Makeup Lip Oil (Raspberry)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#B23A56" },
+      { sku:"14965784", name:"No Makeup Lip Oil (Plum)", size:"3.5ml", pvpr:35, dto:29.75, swatch:"#6E3550" }
+    ]}
+  ];
+
+  var euro = function(n){
+    return n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+  };
+
+  var catalogEl = document.getElementById('catalog');
+  var qtyBySku = {};
+
+  CATEGORIES.forEach(function(cat){
+    var section = document.createElement('section');
+    section.className = 'category';
+    section.id = 'cat-' + cat.id;
+
+    var h2 = document.createElement('h2');
+    h2.innerHTML = cat.label + ' <small>' + cat.products.length + ' productos</small>';
+    section.appendChild(h2);
+
+    cat.products.forEach(function(p){
+      qtyBySku[p.sku] = 0;
+      var row = document.createElement('div');
+      row.className = 'product';
+
+      var swatch = document.createElement('div');
+      swatch.className = 'swatch' + (p.swatch ? '' : ' none');
+      if(p.swatch){ swatch.style.background = p.swatch; }
+      row.appendChild(swatch);
+
+      var info = document.createElement('div');
+      info.className = 'pinfo';
+      info.innerHTML =
+        '<div class="name">' + p.name + '</div>' +
+        '<div class="meta">' +
+          '<span>' + p.size + '</span>' +
+          '<span class="pvpr">' + euro(p.pvpr) + '</span>' +
+          '<span class="pvpdto">' + euro(p.dto) + '</span>' +
+        '</div>';
+      row.appendChild(info);
+
+      var qtyWrap = document.createElement('div');
+      qtyWrap.className = 'qty';
+      var minusBtn = document.createElement('button');
+      minusBtn.type = 'button';
+      minusBtn.setAttribute('aria-label','Quitar unidad de ' + p.name);
+      minusBtn.textContent = '−';
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'qty-' + p.sku;
+      input.inputMode = 'numeric';
+      input.value = '0';
+      input.setAttribute('aria-label','Cantidad de ' + p.name);
+      var plusBtn = document.createElement('button');
+      plusBtn.type = 'button';
+      plusBtn.setAttribute('aria-label','Añadir unidad de ' + p.name);
+      plusBtn.textContent = '+';
+
+      function setQty(v){
+        v = Math.max(0, Math.min(999, Math.round(v) || 0));
+        qtyBySku[p.sku] = v;
+        input.value = String(v);
+        updateSummary();
+      }
+      minusBtn.addEventListener('click', function(){ setQty(qtyBySku[p.sku] - 1); });
+      plusBtn.addEventListener('click', function(){ setQty(qtyBySku[p.sku] + 1); });
+      input.addEventListener('input', function(){ setQty(parseInt(input.value.replace(/[^0-9]/g,''), 10)); });
+      input.addEventListener('blur', function(){ setQty(qtyBySku[p.sku]); });
+
+      qtyWrap.appendChild(minusBtn);
+      qtyWrap.appendChild(input);
+      qtyWrap.appendChild(plusBtn);
+      row.appendChild(qtyWrap);
+
+      section.appendChild(row);
+    });
+
+    catalogEl.appendChild(section);
+  });
+
+  var ALL_PRODUCTS = CATEGORIES.reduce(function(acc, c){ return acc.concat(c.products); }, []);
+  var itemsLabel = document.getElementById('itemsLabel');
+  var totalLabel = document.getElementById('totalLabel');
+  var sendBtn = document.getElementById('sendBtn');
+
+  var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmLines = document.getElementById('confirmLines');
+  var confirmTotal = document.getElementById('confirmTotal');
+  var newOrderBtn = document.getElementById('newOrderBtn');
+
+  function getOrder(){
+    var lines = [];
+    var total = 0;
+    ALL_PRODUCTS.forEach(function(p){
+      var q = qtyBySku[p.sku] || 0;
+      if(q > 0){
+        var lineTotal = q * p.dto;
+        total += lineTotal;
+        lines.push({ text: q + 'x ' + p.name + ' (' + p.size + ')', sku: p.sku, lineTotal: lineTotal });
+      }
+    });
+    return { lines: lines, total: total };
+  }
+
+  function buildWhatsAppUrl(order){
+    if(order.lines.length === 0) return null;
+    var msgLines = order.lines.map(function(l){
+      return l.text + ' [SKU ' + l.sku + '] — ' + euro(l.lineTotal);
+    });
+    var msg = 'Hola! Quiero hacer este pedido de la línea No Make Up:\n\n' +
+      msgLines.join('\n') +
+      '\n\nTotal pedido (dto. 15% incluido): ' + euro(order.total);
+    return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
+  }
+
+  function updateSummary(){
+    var order = getOrder();
+    var totalUnits = 0;
+    ALL_PRODUCTS.forEach(function(p){ totalUnits += (qtyBySku[p.sku] || 0); });
+    itemsLabel.textContent = totalUnits === 1 ? '1 unidad seleccionada' : totalUnits + ' unidades seleccionadas';
+    totalLabel.textContent = euro(order.total);
+
+    var url = buildWhatsAppUrl(order);
+    if(url){
+      sendBtn.href = url;
+      sendBtn.target = '_blank';
+      sendBtn.removeAttribute('aria-disabled');
+    } else {
+      sendBtn.href = '#';
+      sendBtn.removeAttribute('target');
+      sendBtn.setAttribute('aria-disabled', 'true');
+    }
+  }
+  updateSummary();
+
+  function resetOrder(){
+    ALL_PRODUCTS.forEach(function(p){
+      qtyBySku[p.sku] = 0;
+      var input = document.getElementById('qty-' + p.sku);
+      if(input){ input.value = '0'; }
+    });
+    updateSummary();
+  }
+
+  function showConfirmation(order){
+    confirmLines.innerHTML = order.lines.map(function(l){
+      return '<div class="confirm-line"><span>' + l.text + '</span><span>' + euro(l.lineTotal) + '</span></div>';
+    }).join('');
+    confirmTotal.textContent = euro(order.total);
+    confirmOverlay.hidden = false;
+    newOrderBtn.focus();
+  }
+
+  sendBtn.addEventListener('click', function(e){
+    if(sendBtn.getAttribute('aria-disabled') === 'true'){
+      e.preventDefault();
+      return;
+    }
+    // Don't preventDefault: the browser follows the href as a normal link
+    // click, which is what makes it work reliably inside WhatsApp's in-app
+    // browser and other embedded webviews (window.open() gets silently
+    // blocked there). Because the link opens in a new tab/app (target=_blank),
+    // this page stays open, so right after the click we show the customer a
+    // receipt and clear the form so it's ready at zero for their next order.
+    var order = getOrder();
+    window.setTimeout(function(){
+      showConfirmation(order);
+      resetOrder();
+    }, 30);
+  });
+
+  newOrderBtn.addEventListener('click', function(){
+    confirmOverlay.hidden = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  confirmOverlay.addEventListener('click', function(e){
+    if(e.target === confirmOverlay){ confirmOverlay.hidden = true; }
+  });
+
+  if (window.claude && window.claude.hot) {
+    window.claude.hot.snapshot(function(){ return { qtyBySku: qtyBySku }; });
+    var restore = function(data){
+      if(data && data.qtyBySku){
+        Object.keys(data.qtyBySku).forEach(function(sku){
+          var input = document.getElementById('qty-' + sku);
+          if(input){
+            qtyBySku[sku] = data.qtyBySku[sku];
+            input.value = String(data.qtyBySku[sku]);
+          }
+        });
+        updateSummary();
+      }
+    };
+    if (window.claude.hot.ready) { window.claude.hot.ready(function(){ restore(window.claude.hot.data); }); }
+    else { restore(window.claude.hot.data); }
+  }
+})();
+</script>
